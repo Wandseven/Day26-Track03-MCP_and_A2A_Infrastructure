@@ -172,7 +172,25 @@ def check_compliance_requirements(industry: str, company_size: str) -> str:
     )
 
 
-TOOLS = [search_legal_database, calculate_penalty, check_compliance_requirements]
+@tool
+def search_case_law(keywords: str) -> str:
+    """Tìm kiếm án lệ theo từ khóa.
+    
+    Args:
+        keywords: Từ khóa tìm kiếm
+    """
+    cases = {
+        "breach": "Hadley v. Baxendale (1854) - Consequential damages",
+        "negligence": "Donoghue v. Stevenson (1932) - Duty of care",
+        "contract": "Carlill v. Carbolic Smoke Ball Co (1893) - Unilateral contract",
+    }
+    for key, case in cases.items():
+        if key in keywords.lower():
+            return case
+    return "Không tìm thấy án lệ phù hợp"
+
+
+TOOLS = [search_legal_database, calculate_penalty, check_compliance_requirements, search_case_law]
 
 QUESTION = (
     "A tech startup with $5M revenue was caught sharing user data without consent "
@@ -204,30 +222,40 @@ async def main():
     print(f"Question: {QUESTION}")
     print("-" * 70)
 
-    llm = get_llm()
-    graph = create_react_agent(model=llm, tools=TOOLS, prompt=SYSTEM_PROMPT)
+    from langgraph.checkpoint.memory import MemorySaver
 
+    llm = get_llm()
+    memory = MemorySaver()
+    # Challenge 1: Thêm memory/checkpointing
+    graph = create_react_agent(model=llm, tools=TOOLS, prompt=SYSTEM_PROMPT, checkpointer=memory)
+
+    config = {"configurable": {"thread_id": "test_thread"}}
     inputs = {"messages": [{"role": "user", "content": QUESTION}]}
 
-    step = 0
-    async for chunk in graph.astream(inputs, stream_mode="updates"):
+    print("\n>>> Turn 1: Main Question")
+    async for chunk in graph.astream(inputs, config, stream_mode="updates", debug=True):
         for node_name, update in chunk.items():
-            step += 1
             messages = update.get("messages", [])
             for msg in messages:
                 if hasattr(msg, "tool_calls") and msg.tool_calls:
-                    print(f"\n[Step {step}] THINK + ACT (node: {node_name})")
                     for tc in msg.tool_calls:
-                        print(f"  Tool: {tc['name']}")
-                        print(f"  Args: {tc['args']}")
-                elif msg.type == "tool":
-                    print(f"\n[Step {step}] OBSERVE (node: {node_name})")
-                    content = msg.content
-                    print(f"  Result: {content[:300]}{'...' if len(content) > 300 else ''}")
-                elif msg.type == "ai" and msg.content:
-                    print(f"\n[Step {step}] FINAL ANSWER (node: {node_name})")
-                    print("-" * 70)
-                    print(msg.content)
+                        print(f"  [Action] Calling {tc['name']}")
+                elif msg.type == "human":
+                    pass
+                elif msg.content:
+                    print(f"  [Response] {msg.content[:100]}...")
+
+    # Follow-up question to test memory
+    print("\n" + "-" * 70)
+    print(">>> Turn 2: Follow-up Question (Testing Memory)")
+    follow_up = {"messages": [{"role": "user", "content": "Dựa trên các phân tích trên, tóm tắt lại hậu quả chính trong 1 câu."}]}
+    
+    async for chunk in graph.astream(follow_up, config, stream_mode="updates", debug=True):
+        for node_name, update in chunk.items():
+            messages = update.get("messages", [])
+            for msg in messages:
+                if msg.content:
+                    print(f"  [Memory Response] {msg.content}")
 
     print()
     print("-" * 70)

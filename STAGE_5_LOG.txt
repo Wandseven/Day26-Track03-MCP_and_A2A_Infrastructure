@@ -1,0 +1,69 @@
+Connecting to Customer Agent at http://localhost:10100
+Question: If a company breaks a contract and avoids taxes, what are the legal and regulatory consequences? 
+------------------------------------------------------------
+Connected to agent: Customer Agent v1.0.0
+------------------------------------------------------------
+Sending request (this may take 30-60s while agents chain)...
+
+RESPONSE:
+============================================================
+## Comprehensive Legal Analysis: Contract Breach and Tax Avoidance
+
+Based on the analysis from our legal specialists, here's what you need to know:
+
+---
+
+### **OVERVIEW**
+
+When a company both breaks a contract and avoids taxes, it faces **two separate sets of consequences** that can occur simultaneously:
+
+---
+
+## **I. CONTRACT BREACH CONSEQUENCES (Civil Law)**
+
+### **Available Remedies:**
+
+1. **Monetary Damages**
+   - Compensatory damages to cover actual losses
+   - Consequential damages for foreseeable indirect losses (Hadley v. Baxendale)
+   - In rare cases, punitive damages for egregious conduct
+
+2. **Equitable Remedies**
+   - Specific performance (if subject matter is unique)
+   - Injunctions (to prevent further breach, especially in NDAs)
+
+3. **Statute of Limitations**
+   - Typically 4 years for contracts under UCC § 2-725.
+
+---
+
+## **II. TAX AVOIDANCE/EVASION CONSEQUENCES (Criminal & Civil Law)**
+
+### **Legal Exposure:**
+
+1. **Criminal Penalties**
+   - Tax evasion (26 U.S.C. § 7201) is a felony
+   - Up to $250,000 fine and 5 years in prison
+   - Failure to file: up to $25,000 fine and 1 year prison
+
+2. **Civil Penalties**
+   - 75% civil fraud penalty of the underpayment (IRC § 6663)
+   - Interest on back taxes (IRS can go back 6 years or unlimited for fraud)
+
+3. **Personal Liability**
+   - Company officers can be personally liable as 'responsible persons'.
+
+---
+
+## **III. REGULATORY & COMPLIANCE IMPACT**
+
+1. **Securities & Reporting (SOX)**
+   - False certification of financials can lead to $5M fine and 20 years prison.
+   - SEC can bar individuals from serving as officers/directors.
+
+2. **International Exposure**
+   - FBAR penalties for unreported foreign accounts (up to $100K or 50% balance).
+   - FATCA non-compliance consequences.
+
+============================================================
+Test client execution completed successfully.
